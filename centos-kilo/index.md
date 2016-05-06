@@ -12,7 +12,7 @@
 
 ## 使用
 - ceilometer 週期設定
-- Stac k使用
+- Stack 使用
 - ….(還在製作)
 
 ## FAQ
