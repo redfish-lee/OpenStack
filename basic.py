@@ -44,6 +44,7 @@ def setupMariadbConfig():
   dstMysqlFile = "./tmp/mysql_secure.sh"
 
   cmd = {}
+  cmd["mkdir   tmp file       "] = "mkdir -p tmp"
   cmd["copy    mariadb config "] = "/bin/cp " + srcMariadbFile + " " + dstMariadbFile
   cmd["copy    mysql secure sh"] = "/bin/cp " + srcMysqlFile   + " " + dstMysqlFile
   cmd["chmod   mysql secure sh"] = "chmod +x " + dstMysqlFile
@@ -55,12 +56,14 @@ def setupMariadbConfig():
   inplaceChange(dstMariadbFile, 'CONTROLLER_IP', Hosts.HOSTS_IP[Agent.CONTROLLER])
 
   print "[INFO] replace mysql password"
-  inplaceChange(dstMariadbFile, 'MYSQL_PASSWORD', User.MYSQL[PASSWORD])
+  inplaceChange(dstMysqlFile, 'MYSQL_PASSWORD', User.MYSQL[User.PASSWORD])
 
   cmd = {}
   cmd["enable  mariadb service"] = "systemctl enable mariadb.service"
   cmd["start   mariadb service"] = "systemctl start mariadb.service"
-  cmd["install mysql secure   "] = dstMysqlFile
+
+  cmd["install expect         "] = "yum install expect -y"
+  cmd["install mysql secure   "] = dstMysqlFile              # need expect
   for key, value in cmd.iteritems():
     print "[INFO] " + key
     subprocess.call(value.split())

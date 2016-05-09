@@ -1,5 +1,7 @@
 #!/usr/bin/expect --
-spawn /usr/local/mysql/bin/mysql_secure_installation
+
+## for centos 7 kilo openstack
+spawn /usr/bin/mysql_secure_installation
 
 expect "Enter current password for root (enter for none):"
 send "\r"
