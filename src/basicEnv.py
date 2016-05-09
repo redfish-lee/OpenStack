@@ -95,7 +95,7 @@ def firewall():
     task.exe()
 
   print "success, reboot your computer now? (y/n)"
-  ans = raw_input(prompt)
+  ans = raw_input('> ')
 
   if ans in ['y', 'yes', 'Y', 'Yes', 'YES']:
     Task("reboot", "reboot").exe()
