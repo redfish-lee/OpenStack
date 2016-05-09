@@ -8,6 +8,10 @@ class User:
     ACCOUNT: "openstack",
     PASSWORD: "123456",
   }
+  MYSQL = {
+    ACCOUNT: "root"
+    PASSWORD: "123456"
+  }
 
 class Agent:
   CONTROLLER = "controller"
