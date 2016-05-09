@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
-import shlex, subprocess, os, sys
+import shlex, os, sys
 from config import *
 from func import *
 
@@ -62,9 +62,9 @@ def setupMariadbConfig():
   cmd = [
     Task("enable  mariadb service", "systemctl enable mariadb.service"),
     Task("start   mariadb service", "systemctl start mariadb.service"),
-
+    # mysql secure installation
     Task("install expect         ", "yum install expect -y"),
-    Task("install mysql secure   ", dstMysqlFile),              # need expect
+    Task("install mysql secure   ", dstMysqlFile),
   ]
   for task in cmd:
     task.exe()
