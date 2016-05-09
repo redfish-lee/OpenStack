@@ -28,8 +28,6 @@ class Tee(object):
         for f in self.files:
             f.flush()
 
-
-
 def main():
 
   f = open(Hosts.HOSTS_DIR, 'a')
@@ -39,7 +37,7 @@ def main():
   #print "test"  
 
   for key, value in Hosts.HOSTS_IP.iteritems():
-    content = value + "\t" + key
+    content = value + "   " + key
     print content
 
   #use the original
