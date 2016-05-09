@@ -38,13 +38,13 @@ def installBasic():
 
 def setupMariadbConfig():
 
-  srcMariadbFile = "./lib/mariadb/mariadb_openstack.cnf"
+  srcMariadbFile = "../lib/mariadb/mariadb_openstack.cnf"
   dstMariadbFile = "/etc/my.cnf.d/mariadb_openstack.cnf"
-  srcMysqlFile = "./lib/mariadb/mysql_secure.sh"
-  dstMysqlFile = "./tmp/mysql_secure.sh"
+  srcMysqlFile = "../lib/mariadb/mysql_secure.sh"
+  dstMysqlFile = "../tmp/mysql_secure.sh"
 
   cmd = [
-    Task("create  tmp dir        ", "mkdir -p ./tmp"),
+    Task("create  tmp dir        ", "mkdir -p ../tmp"),
     Task("create  mysql secure sh", "touch " + dstMysqlFile),
     Task("copy    mariadb config ", "/bin/cp " + srcMariadbFile + " " + dstMariadbFile),
     Task("copy    mysql secure sh", "/bin/cp " + srcMysqlFile   + " " + dstMysqlFile),
@@ -84,11 +84,30 @@ def installRabbitmq():
   for task in cmd:
     task.exe()
   
+def firewall():
+  srcMysqlFile = "../lib/selinux/config"
+  dstMysqlFile = "/etc/selinux/config"
+
+  cmd = [
+    Task("copy    selinux config ", "/bin/cp " + srcMariadbFile + " " + dstMariadbFile)
+  ]
+  for task in cmd:
+    task.exe()
+
+  print "success, reboot your computer now? (y/n)"
+  ans = raw_input(prompt)
+
+  if ans in ['y', 'yes', 'Y', 'Yes', 'YES']:
+    Task("reboot", "reboot").exe()
+
+
+
 def main():
   addHosts()
   installBasic()
   setupMariadbConfig()
   installRabbitmq()
+
 
 if __name__ == '__main__':
   main()
