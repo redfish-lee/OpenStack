@@ -15,7 +15,7 @@ def add_hosts():
     #print "test"  
 
     for key, value in Hosts.HOSTS_IP.iteritems():
-      if key not in open(Hosts.HOSTS_DIR).read()
+      if key not in open(Hosts.HOSTS_DIR).read():
         content = value + "   " + key
         print content
 
