@@ -5,7 +5,7 @@ import shlex, subprocess, os, sys
 from config import *
 from func import *
 
-def add_hosts():
+def addHosts():
   
     print "[INFO] add ip on hosts"
     f = open(Hosts.HOSTS_DIR, 'a')
@@ -21,10 +21,10 @@ def add_hosts():
 
     # use the original
     # Only on stdout
-    # sys.stdout = original
+    sys.stdout = original
     f.close()
 
-def install_basic():
+def installBasic():
   
   cmd = {}
   cmd["install epel           "] = "yum install http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm -y"
@@ -36,26 +36,26 @@ def install_basic():
     print "[INFO] " + key
     subprocess.call(value.split())
 
-def setup_mariadb_config():
+def setupMariadbConfig():
 
-  srcMariadbFile = "./lib/mariadb/mariadb_openstack.cnf "
-  dstMariadbFile = "/etc/my.cnf.d/mariadb_openstack.cnf "
-  srcMysqlFile = "./lib/mariadb/mysql_secure.sh "
+  srcMariadbFile = "./lib/mariadb/mariadb_openstack.cnf"
+  dstMariadbFile = "/etc/my.cnf.d/mariadb_openstack.cnf"
+  srcMysqlFile = "./lib/mariadb/mysql_secure.sh"
   dstMysqlFile = "./tmp/mysql_secure.sh"
 
   cmd = {}
-  cmd["copy    mariadb config "] = "/bin/cp " + srcMariadbFile + dstMariadbFile
-  cmd["copy    mysql secure sh"] = "/bin/cp " + srcMysqlFile   + dstMysqlFile
+  cmd["copy    mariadb config "] = "/bin/cp " + srcMariadbFile + " " + dstMariadbFile
+  cmd["copy    mysql secure sh"] = "/bin/cp " + srcMysqlFile   + " " + dstMysqlFile
+  cmd["chmod   mysql secure sh"] = "chmod +x " + dstMysqlFile
   for key, value in cmd.iteritems():
-    if value is 
     print "[INFO] " + key
     subprocess.call(value.split())
 
   print "[INFO] update  controller ip"
-  func.inplace_change(dstMariadbFile, 'CONTROLLER_IP', Hosts.HOSTS_IP[Agent.CONTROLLER])
+  inplaceChange(dstMariadbFile, 'CONTROLLER_IP', Hosts.HOSTS_IP[Agent.CONTROLLER])
 
   print "[INFO] replace mysql password"
-  func.inplace_change(dstMariadbFile, 'MYSQL_PASSWORD', User.MYSQL[PASSWORD])
+  inplaceChange(dstMariadbFile, 'MYSQL_PASSWORD', User.MYSQL[PASSWORD])
 
   cmd = {}
   cmd["enable  mariadb service"] = "systemctl enable mariadb.service"
@@ -66,25 +66,25 @@ def setup_mariadb_config():
     subprocess.call(value.split())
   
 
-def install_rabbitmq():
+def installRabbitmq():
 
   cmd = {}
   cmd["install rabbitmq server"] = "yum install rabbitmq-server -y"
   cmd["enable  rabbitmq server"] = "systemctl enable rabbitmq-server.service"
   cmd["start   rabbitmq server"] = "systemctl start rabbitmq-server.service"
   # rabbitmqctl add_user openstack RABBIT_PASS
-  cmd[""] = "rabbitmqctl add_user " + User.RABBITMQ[ACCOUNT] + " " + User.RABBITMQ[PASSWORD]
-  cmd[""] = "rabbitmqctl set_permissions " + User.RABBITMQ[ACCOUNT] + " '.*' '.*' '.*'"
+  cmd[""] = "rabbitmqctl add_user " + User.RABBITMQ[User.ACCOUNT] + " " + User.RABBITMQ[User.PASSWORD]
+  cmd[""] = "rabbitmqctl set_permissions " + User.RABBITMQ[User.ACCOUNT] + " '.*' '.*' '.*'"
 
   for key, value in cmd.iteritems():
     print "[INFO] " + key
     subprocess.call(value.split())
   
 def main():
-  add_hosts()
-  install_basic()
-  setup_mariadb_config()
-  install_rabbitmq()
+  addHosts()
+  installBasic()
+  setupMariadbConfig()
+  installRabbitmq()
 
 if __name__ == '__main__':
   main()

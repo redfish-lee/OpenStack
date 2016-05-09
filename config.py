@@ -9,8 +9,8 @@ class User:
     PASSWORD: "123456",
   }
   MYSQL = {
-    ACCOUNT: "root"
-    PASSWORD: "123456"
+    ACCOUNT: "root",
+    PASSWORD: "123456",
   }
 
 class Agent:

@@ -1,4 +1,7 @@
-def inplace_change(filename, old_string, new_string):
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+def inplaceChange(filename, old_string, new_string):
   # Safely read the input filename using 'with'
   with open(filename) as f:
     s = f.read()

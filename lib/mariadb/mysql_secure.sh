@@ -1,36 +1,28 @@
-#!/bin/bash
+#!/usr/bin/expect --
+spawn /usr/local/mysql/bin/mysql_secure_installation
 
-aptitude -y install expect
+expect "Enter current password for root (enter for none):"
+send "\r"
 
-// Not required in actual script
-MYSQL_ROOT_PASSWORD=MYSQL_PASSWORD
+expect "Set root password?"
+send "y\r"
 
-SECURE_MYSQL=$(expect -c "
+expect "New password:"
+send "MYSQL_PASSWORD\r"
 
-set timeout 10
-spawn mysql_secure_installation
+expect "Re-enter new password:"
+send "MYSQL_PASSWORD\r"
 
-expect \"Enter current password for root (enter for none):\"
-send \"$MYSQL\r\"
+expect "Remove anonymous users?"
+send "y\r"
 
-expect \"Change the root password?\"
-send \"n\r\"
+expect "Disallow root login remotely?"
+send "y\r"
 
-expect \"Remove anonymous users?\"
-send \"y\r\"
+expect "Remove test database and access to it?"
+send "y\r"
 
-expect \"Disallow root login remotely?\"
-send \"y\r\"
+expect "Reload privilege tables now?"
+send "y\r"
 
-expect \"Remove test database and access to it?\"
-send \"y\r\"
-
-expect \"Reload privilege tables now?\"
-send \"y\r\"
-
-expect eof
-")
-
-echo "$SECURE_MYSQL"
-
-aptitude -y purge expect
+puts "Ended expect script."
