@@ -84,12 +84,12 @@ def installRabbitmq():
   for task in cmd:
     task.exe()
   
-def firewall():
-  srcMysqlFile = "../lib/selinux/config"
-  dstMysqlFile = "/etc/selinux/config"
+def closeFirewall():
+  srcFile = "../lib/selinux/config"
+  dstFile = "/etc/selinux/config"
 
   cmd = [
-    Task("copy    selinux config ", "/bin/cp " + srcMariadbFile + " " + dstMariadbFile)
+    Task("copy    selinux config ", "/bin/cp " + srcFile + " " + dstFile),
   ]
   for task in cmd:
     task.exe()
@@ -107,6 +107,7 @@ def main():
   installBasic()
   setupMariadbConfig()
   installRabbitmq()
+  closeFirewall()
 
 
 if __name__ == '__main__':
