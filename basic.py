@@ -25,16 +25,16 @@ def addHosts():
     f.close()
 
 def installBasic():
-  
-  cmd = {}
-  cmd["install epel           "] = "yum install http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm -y"
-  cmd["update  centos         "] = "yum update -y"
-  cmd["install selinux        "] = "yum install openstack-selinux -y"
-  cmd["install mariadb        "] = "yum install mariadb mariadb-server MySQL-python -y"
 
-  for key, value in cmd.iteritems():
-    print "[INFO] " + key
-    subprocess.call(value.split())
+  cmd = [
+    Task("install epel           ", "yum install http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm -y"),
+    Task("update  centos         ", "yum update -y"),
+    Task("install selinux        ", "yum install openstack-selinux -y"),
+    Task("install mariadb        ", "yum install mariadb mariadb-server MySQL-python -y"),
+  ]
+
+  for task in cmd:
+    task.exe()
 
 def setupMariadbConfig():
 
@@ -43,45 +43,46 @@ def setupMariadbConfig():
   srcMysqlFile = "./lib/mariadb/mysql_secure.sh"
   dstMysqlFile = "./tmp/mysql_secure.sh"
 
-  cmd = {}
-  cmd["mkdir   tmp file       "] = "mkdir -p tmp"
-  cmd["copy    mariadb config "] = "/bin/cp " + srcMariadbFile + " " + dstMariadbFile
-  cmd["copy    mysql secure sh"] = "/bin/cp " + srcMysqlFile   + " " + dstMysqlFile
-  cmd["chmod   mysql secure sh"] = "chmod +x " + dstMysqlFile
-  for key, value in cmd.iteritems():
-    print "[INFO] " + key
-    subprocess.call(value.split())
+  cmd = [
+    Task("create  tmp dir        ", "mkdir -p ./tmp"),
+    Task("create  mysql secure sh", "touch " + dstMysqlFile),
+    Task("copy    mariadb config ", "/bin/cp " + srcMariadbFile + " " + dstMariadbFile),
+    Task("copy    mysql secure sh", "/bin/cp " + srcMysqlFile   + " " + dstMysqlFile),
+    Task("chmod   mysql secure sh", "chmod +x " + dstMysqlFile),
+  ]
+  for task in cmd:
+    task.exe()
 
-  print "[INFO] update  controller ip"
+  print "[INFO] replace controller ip "
   inplaceChange(dstMariadbFile, 'CONTROLLER_IP', Hosts.HOSTS_IP[Agent.CONTROLLER])
 
   print "[INFO] replace mysql password"
   inplaceChange(dstMysqlFile, 'MYSQL_PASSWORD', User.MYSQL[User.PASSWORD])
 
-  cmd = {}
-  cmd["enable  mariadb service"] = "systemctl enable mariadb.service"
-  cmd["start   mariadb service"] = "systemctl start mariadb.service"
+  cmd = [
+    Task("enable  mariadb service", "systemctl enable mariadb.service"),
+    Task("start   mariadb service", "systemctl start mariadb.service"),
 
-  cmd["install expect         "] = "yum install expect -y"
-  cmd["install mysql secure   "] = dstMysqlFile              # need expect
-  for key, value in cmd.iteritems():
-    print "[INFO] " + key
-    subprocess.call(value.split())
+    Task("install expect         ", "yum install expect -y"),
+    Task("install mysql secure   ", dstMysqlFile),              # need expect
+  ]
+  for task in cmd:
+    task.exe()
   
 
 def installRabbitmq():
 
-  cmd = {}
-  cmd["install rabbitmq server"] = "yum install rabbitmq-server -y"
-  cmd["enable  rabbitmq server"] = "systemctl enable rabbitmq-server.service"
-  cmd["start   rabbitmq server"] = "systemctl start rabbitmq-server.service"
-  # rabbitmqctl add_user openstack RABBIT_PASS
-  cmd[""] = "rabbitmqctl add_user " + User.RABBITMQ[User.ACCOUNT] + " " + User.RABBITMQ[User.PASSWORD]
-  cmd[""] = "rabbitmqctl set_permissions " + User.RABBITMQ[User.ACCOUNT] + " '.*' '.*' '.*'"
+  cmd = [
+    Task("install rabbitmq server", "yum install rabbitmq-server -y"),
+    Task("enable  rabbitmq server", "systemctl enable rabbitmq-server.service"),
+    Task("start   rabbitmq server", "systemctl start rabbitmq-server.service"),
+    # rabbitmqctl add_user openstack RABBIT_PASS
+    Task("rabbit  add user       ", "rabbitmqctl add_user " + User.RABBITMQ[User.ACCOUNT] + " " + User.RABBITMQ[User.PASSWORD]),
+    Task("rabbit  set permissions", "rabbitmqctl set_permissions " + User.RABBITMQ[User.ACCOUNT] + " '.*' '.*' '.*'"),
+  ]
 
-  for key, value in cmd.iteritems():
-    print "[INFO] " + key
-    subprocess.call(value.split())
+  for task in cmd:
+    task.exe()
   
 def main():
   addHosts()
