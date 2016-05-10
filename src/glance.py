@@ -40,11 +40,12 @@ def configureHTTP():
   # curl http://git.openstack.org/cgit/openstack/keystone/plain/httpd/keystone.py?h=stable/kilo \
   # | tee /var/www/cgi-bin/keystone/main /var/www/cgi-bin/keystone/admin
   Task("mkdir -p /var/www/cgi-bin/keystone")
-  FileCopy("../lib/glance/cgi-bin_keystone", "/var/www/cgi-bin/keystone/main")
-  FileCopy("../lib/glance/cgi-bin_keystone", "/var/www/cgi-bin/keystone/admin")
+  f1 = FileCopy("../lib/glance/cgi-bin_keystone", "/var/www/cgi-bin/keystone/main")
+  f2 = FileCopy("../lib/glance/cgi-bin_keystone", "/var/www/cgi-bin/keystone/admin")
+  f1.chmod("755")
+  f2.chmod("755")
 
   Task("chown -R keystone:keystone /var/www/cgi-bin/keystone")
-  Task("find /opt/lampp/htdocs -type d -exec chmod 755 {} \;")
 
   Systemctl("httpd.service", ["enable", "start"])
 
