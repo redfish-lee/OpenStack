@@ -31,7 +31,14 @@ class User:
     ACCOUNT: "glance",
     PASSWORD: "123456",
   }
-
+  NOVA = {
+    ACCOUNT: "nova",
+    PASSWORD: "123456",
+  }
+  NEUTRON = {
+    ACCOUNT: "neutron",
+    PASSWORD: "123456",
+  }
 
 class Agent:
   CONTROLLER = "controller"

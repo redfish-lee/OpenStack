@@ -14,6 +14,7 @@ def createGlance():
   f.exe()
 
 def installGlance():
+  Source().admin()
   Task("openstack user create --password " + User.GLANCE[User.PASSWORD] + " glance")
   Task("openstack role add --project service --user glance admin")
   Task("openstack service create --name glance \
@@ -30,27 +31,28 @@ def installGlance():
     "python-glance",
     "python-glanceclient",
   ]
-
   yumInstall(install_list)
 
-  Task("")
-  Task("")
-  Task("")
-  
+  f = FileCopy("../lib/glance/glance-api.conf", "/etc/glance/glance-api.conf")
+  f.replace('GLANCE_DBPASS', User.GLANCE[User.PASSWORD])
+  f.replace('GLANCE_PASS', User.GLANCE[User.PASSWORD])
+
+  f = FileCopy("../lib/glance/glance-registry.conf", "/etc/glance/glance-registry.conf")
+  f.replace('GLANCE_DBPASS', User.GLANCE[User.PASSWORD])
+  f.replace('GLANCE_PASS', User.GLANCE[User.PASSWORD])  
+
   Task("su -s /bin/sh -c 'glance-manage db_sync' glance")
   Systemctl("openstack-glance-api.service", ["enable", "start"])
   Systemctl("openstack-glance-registry.service", ["enable", "start"])
 
 def verify():
-  Source.admin()
+  Source().admin()
   Task("mkdir /tmp/images")
   Task("wget -P /tmp/images http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img")
   Task("glance image-create --name 'cirros-0.3.4-x86_64' --file /tmp/images/cirros-0.3.4-x86_64-disk.img \
           --disk-format qcow2 --container-format bare --visibility public --progress")
   Task("glance image-list")
   Task("rm -r /tmp/images")
-
-
 
 def main():
   """Install and configure"""
