@@ -33,19 +33,29 @@ def createKeystone():
 
 def installKeystone():
   cmd = [
-    Task("install keystone       ", "yum install openstack-keystone httpd mod_wsgi python-openstackclient memcached python-memcached"),
-    Task("create  mysql sh       ", "touch "),
-    Task("copy    mysql sh       ", "/bin/cp " + srcMysqlFile   + " " + dstMysqlFile),
+    Task("install keystone       ", "yum install openstack-keystone httpd mod_wsgi python-openstackclient memcached python-memcached -y"),
+    Task("enable  memcached      ", "systemctl enable memcached.service"),
+    Task("start   memcached      ", "systemctl start memcached.service"),
     Task("chmod   mysql sh       ", "chmod +x " + dstMysqlFile),
   ]
   
   for task in cmd:
     task.exe()
 
+  cmd = [
+    Task("install keystone       ", "su -s /bin/sh -c "keystone-manage db_sync" keystone"),
+    Task("enable  memcached      ", "systemctl enable memcached.service"),
+    Task("start   memcached      ", "systemctl start memcached.service"),
+    Task("chmod   mysql sh       ", "chmod +x " + dstMysqlFile),
+  ]
+
+def configureHTTP():
+
 
 def main():
   createKeystone()
   installKeystone()
+  configureHTTP()
 
 
 if __name__ == '__main__':
