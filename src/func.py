@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
+import subprocess
+
 class Task:
   def __init__(self, command, info=None):
     self.info = command if info is None else info
@@ -47,7 +49,7 @@ class FileCopy:
     Task(dst)
 
 class Systemctl():
-  def __init__(self, service, stat):
+  def __init__(self, service, status):
     self.status = status
     self.service = service
     self.exe()

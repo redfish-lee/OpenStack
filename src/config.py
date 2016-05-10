@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
-import subprocess
-
 class User:
   ACCOUNT = "account"
   PASSWORD = "password"
