@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
+import os
+
 class User:
   ACCOUNT = "account"
   PASSWORD = "password"
@@ -39,5 +41,42 @@ class Hosts:
     Agent.NETWORK: "127.0.0.1",
     Agent.COMPUTE: "127.0.0.1",
   }
+
+class Source:
+  def export(key, value):
+    os.environ[key] = value
+
+  def delexp(key):
+    del os.environ[key]
+
+  def admin(self):
+    self.delexp('OS_SERVICE_TOKEN')
+    self.export('OS_USERNAME'         , 'admin')
+    self.export('OS_PASSWORD'         , User.ADMIN[User.PASSWORD])
+    self.export('OS_AUTH_URL'         , 'http://controller:5000/v2.0')
+    self.export('PS1'                 , '[\u@\h \W(keystone_admin)]\$ ')
+
+    self.export('OS_TENANT_NAME'      , 'admin')
+    self.export('OS_REGION_NAME'      , 'RegionOne')
+    self.export('OS_IMAGE_API_VERSION', '2')
+
+  def demo(self):
+    self.delexp('OS_SERVICE_TOKEN')
+    self.export('OS_USERNAME'         , 'demo')
+    self.export('OS_PASSWORD'         , User.DEMO[User.PASSWORD])
+    self.export('OS_AUTH_URL'         , 'http://controller:5000/v2.0')
+    self.export('PS1'                 , '[\u@\h \W(keystone_demo)]\$ ')
+
+    self.export('OS_TENANT_NAME'      , 'demo')
+    self.export('OS_REGION_NAME'      , 'RegionOne')
+    self.export('OS_IMAGE_API_VERSION', '2')
+
+
+
+
+
+
+
+
 
 
