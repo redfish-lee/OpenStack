@@ -9,7 +9,7 @@ def createKeystone():
 
   f = FileCopy("../lib/keystone/create_keystone.sh", "../tmp/create_keystone.sh")
   f.replace('MYSQL_PASSWORD', User.MYSQL[User.PASSWORD])
-  f.replace('KEYSTONE_DBPASS', User.GLANCE[User.PASSWORD])
+  f.replace('KEYSTONE_DBPASS', User.KEYSTONE[User.PASSWORD])
   f.exe()
 
 def installKeystone():
@@ -28,7 +28,7 @@ def installKeystone():
 
   f = FileCopy("../lib/keystone/keystone.conf", "/etc/keystone/keystone.conf")
   f.replace('ADMIN_TOKEN', User.ADMIN[User.PASSWORD])
-  f.replace('KEYSTONE_DBPASS', User.GLANCE[User.PASSWORD])
+  f.replace('KEYSTONE_DBPASS', User.KEYSTONE[User.PASSWORD])
 
   Task("su -s /bin/sh -c 'keystone-manage db_sync' keystone")
 
