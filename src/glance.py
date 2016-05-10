@@ -30,13 +30,16 @@ def installGlance():
     "python-glance",
     "python-glanceclient",
   ]
-
   yumInstall(install_list)
 
-  Task("")
-  Task("")
-  Task("")
-  
+  f = FileCopy("../lib/glance/glance-api.conf", "/etc/glance/glance-api.conf")
+  f.replace('GLANCE_DBPASS', User.GLANCE[User.PASSWORD])
+  f.replace('GLANCE_PASS', User.GLANCE[User.PASSWORD])
+
+  f = FileCopy("../lib/glance/glance-registry.conf", "/etc/glance/glance-registry.conf")
+  f.replace('GLANCE_DBPASS', User.GLANCE[User.PASSWORD])
+  f.replace('GLANCE_PASS', User.GLANCE[User.PASSWORD])  
+
   Task("su -s /bin/sh -c 'glance-manage db_sync' glance")
   Systemctl("openstack-glance-api.service", ["enable", "start"])
   Systemctl("openstack-glance-registry.service", ["enable", "start"])
