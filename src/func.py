@@ -15,7 +15,8 @@ class Task:
     return self.command
   def exe(self):
     print "[INFO] " + self.info
-    subprocess.call(self.command.split())
+    #subprocess.call(self.command.split())
+    os.system(self.command)
 
 class FileCopy:
   def __init__(self, src, dst):
