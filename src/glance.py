@@ -30,7 +30,7 @@ def installKeystone():
   f.replace('ADMIN_TOKEN', User.ADMIN[User.PASSWORD])
   f.replace('KEYSTONE_DBPASS', User.GLANCE[User.PASSWORD])
 
-  Task("su -s /bin/sh -c 'keystone-manage db_sync' keystone")
+  Task("/bin/sh -c 'keystone-manage db_sync' keystone")
 
 def configureHTTP():
 
@@ -44,7 +44,7 @@ def configureHTTP():
   FileCopy("../lib/glance/cgi-bin_keystone", "/var/www/cgi-bin/keystone/admin")
 
   Task("chown -R keystone:keystone /var/www/cgi-bin/keystone")
-  Task("chmod 755 /var/www/cgi-bin/keystone/*")
+  Task("find /opt/lampp/htdocs -type d -exec chmod 755 {} \;")
 
   Systemctl("httpd.service", ["enable", "start"])
 
