@@ -43,7 +43,7 @@ class FileCopy:
     print "[INFO] replace", dst
     inplaceChange(dst, old_string, new_string)
 
-  def exe(dst = None):
+  def exe(self, dst = None):
     dst = self.dst if dst is None else dst
     self.chmod("+x")
     Task(dst)

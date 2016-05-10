@@ -24,6 +24,8 @@ def addHosts():
   f.close()
 
 def installBasic():
+
+
   install_list = [
     "http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm",
     "http://rdo.fedorapeople.org/openstack-kilo/rdo-release-kilo.rpm",
@@ -33,8 +35,8 @@ def installBasic():
     "MySQL-python",
   ]
 
-  Task("yum update -y")
   yumInstall(install_list)
+  Task("yum update -y")
 
 def setupMariadbConfig():
   # edit /etc/my.cnf.d/mariadb_openstack.cnf
@@ -80,7 +82,7 @@ def main():
 
   """OpenStack packages"""
   installBasic()
-  
+
   """SQL database"""
   setupMariadbConfig()
 
