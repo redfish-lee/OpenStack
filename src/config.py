@@ -43,10 +43,10 @@ class Hosts:
   }
 
 class Source:
-  def export(key, value):
+  def export(self, key, value):
     os.environ[key] = value
 
-  def delexp(key):
+  def delexp(self, key):
     del os.environ[key]
 
   def admin(self):
