@@ -6,6 +6,15 @@ import subprocess
 class User:
   ACCOUNT = "account"
   PASSWORD = "password"
+  # all account is default, not used in setup
+  ADMIN = {
+    ACCOUNT: "admin",
+    PASSWORD: "123456",
+  }
+  DEMO = {
+    ACCOUNT: "demo",
+    PASSWORD: "123456",
+  }
   RABBITMQ = {
     ACCOUNT: "openstack",
     PASSWORD: "123456",

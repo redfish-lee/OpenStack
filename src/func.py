@@ -2,9 +2,10 @@
 # -*- coding: UTF-8 -*-
 
 class Task:
-  def __init__(self, info, command):
-    self.info = info
+  def __init__(self, command, info=""):
+    self.info = command if info is "" else info
     self.command  = command
+    self.exe()
   def info(self):
     return self.info
   def command(self):
@@ -12,6 +13,43 @@ class Task:
   def exe(self):
     print "[INFO] " + self.info
     subprocess.call(self.command.split())
+
+class FileCopy:
+  def __init__(self, src, dst):
+    self.src = src
+    self.dst = dst
+    self.copy()
+  
+  def src(self):
+    return self.src
+  
+  def dst(self):
+    return self.dst
+  
+  def chmod(per, dst = self.dst):
+    Task("chmod "   + per + " " + dst)
+  
+  def copy(src = self.src, dst = self.dst):
+    Task("touch "   + dst)
+    Task("/bin/cp " + src + " " + dst)
+  
+  def replace(old_string, new_string, dst = self.dst):
+    print "[INFO] replace", dst
+    inplaceChange(dst, old_string, new_string)
+
+  def exe(dst = self.dst):
+    self.chmod("+x"):
+    Task(dst)
+
+class Systemctl():
+  def __init__(self, service, stat):
+    self.status = status
+    self.service = service
+    self.exe()
+
+  def exe(self):
+    for stat in self.status:
+      Task("systemctl " +  stat + " " + self.service)
 
 class Tee(object):
     def __init__(self, *files):
@@ -23,6 +61,10 @@ class Tee(object):
     def flush(self) :
         for f in self.files:
             f.flush()
+
+def yumInstall(install_list):
+  for item in install_list:
+    Task("yum install " + item + " -y")
 
 def inplaceChange(filename, old_string, new_string):
   # Safely read the input filename using 'with'

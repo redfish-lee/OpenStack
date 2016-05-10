@@ -7,109 +7,87 @@ from func import *
 
 def addHosts():
   
-    print "[INFO] add ip on hosts"
-    f = open(Hosts.HOSTS_DIR, 'a')
-    original = sys.stdout
-    sys.stdout = Tee(sys.stdout, f)
-    # This will go to stdout and the file out.txt
-    #print "test"  
+  print "[INFO] add ip on hosts"
+  f = open(Hosts.HOSTS_DIR, 'a')
+  original = sys.stdout
+  sys.stdout = Tee(sys.stdout, f)
+  # This will go to stdout and the file out.txt
+  #print "test"  
 
-    for key, value in Hosts.HOSTS_IP.iteritems():
-      if key not in open(Hosts.HOSTS_DIR).read():
-        content = value + "   " + key
-        print content
+  for key, value in Hosts.HOSTS_IP.iteritems():
+    if key not in open(Hosts.HOSTS_DIR).read():
+      content = value + "   " + key
+      print content
 
-    # use the original
-    # Only on stdout
-    sys.stdout = original
-    f.close()
+  # use the 'original' only on stdout
+  sys.stdout = original
+  f.close()
 
 def installBasic():
-
-  cmd = [
-    Task("install epel           ", "yum install http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm -y"),
-    Task("install rdo kilo       ", "yum install http://rdo.fedorapeople.org/openstack-kilo/rdo-release-kilo.rpm -y"),
-    Task("update  centos         ", "yum update -y"),
-    Task("install selinux        ", "yum install openstack-selinux -y"),
-    Task("install mariadb        ", "yum install mariadb mariadb-server MySQL-python -y"),
+  install_list = [
+    "http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm",
+    "http://rdo.fedorapeople.org/openstack-kilo/rdo-release-kilo.rpm",
+    "openstack-selinux",
+    "mariadb",
+    "mariadb-server",
+    "MySQL-python",
   ]
 
-  for task in cmd:
-    task.exe()
+  Task("yum update -y")
+  yumInstall(install_list)
 
 def setupMariadbConfig():
+  # edit /etc/my.cnf.d/mariadb_openstack.cnf
+  f = FileCopy("../lib/mariadb/mariadb_openstack.cnf", "/etc/my.cnf.d/mariadb_openstack.cnf")
+  f.replace('CONTROLLER_IP', Hosts.HOSTS_IP[Agent.CONTROLLER])
 
-  srcMariadbFile = "../lib/mariadb/mariadb_openstack.cnf"
-  dstMariadbFile = "/etc/my.cnf.d/mariadb_openstack.cnf"
-  srcMysqlFile = "../lib/mariadb/mysql_secure.sh"
-  dstMysqlFile = "../tmp/mysql_secure.sh"
+  # enable mariadb.service
+  Systemctl("mariadb.service", ["enable", "start"])
 
-  cmd = [
-    Task("create  tmp dir        ", "mkdir -p ../tmp"),
-    Task("create  mysql secure sh", "touch " + dstMysqlFile),
-    Task("copy    mariadb config ", "/bin/cp " + srcMariadbFile + " " + dstMariadbFile),
-    Task("copy    mysql secure sh", "/bin/cp " + srcMysqlFile   + " " + dstMysqlFile),
-    Task("chmod   mysql secure sh", "chmod +x " + dstMysqlFile),
-  ]
-  for task in cmd:
-    task.exe()
+  # mysql_secure_installation
+  # lib/mariadb/mysql_secure.sh
+  Task("mkdir -p ../tmp")
+  yumInstall(['expect'])
+  f = FileCopy("../lib/mariadb/mysql_secure.sh", "../tmp/mysql_secure.sh")
+  f.replace('MYSQL_PASSWORD', User.MYSQL[User.PASSWORD])
+  f.exe()
 
-  print "[INFO] replace controller ip "
-  inplaceChange(dstMariadbFile, 'CONTROLLER_IP', Hosts.HOSTS_IP[Agent.CONTROLLER])
-
-  print "[INFO] replace mysql password"
-  inplaceChange(dstMysqlFile, 'MYSQL_PASSWORD', User.MYSQL[User.PASSWORD])
-
-  cmd = [
-    Task("enable  mariadb service", "systemctl enable mariadb.service"),
-    Task("start   mariadb service", "systemctl start mariadb.service"),
-    # mysql secure installation
-    Task("install expect         ", "yum install expect -y"),
-    Task("install mysql secure   ", dstMysqlFile),
-  ]
-  for task in cmd:
-    task.exe()
   
 
 def installRabbitmq():
 
-  cmd = [
-    Task("install rabbitmq server", "yum install rabbitmq-server -y"),
-    Task("enable  rabbitmq server", "systemctl enable rabbitmq-server.service"),
-    Task("start   rabbitmq server", "systemctl start rabbitmq-server.service"),
-    # rabbitmqctl add_user openstack RABBIT_PASS
-    Task("rabbit  add user       ", "rabbitmqctl add_user " + User.RABBITMQ[User.ACCOUNT] + " " + User.RABBITMQ[User.PASSWORD]),
-    Task("rabbit  set permissions", "rabbitmqctl set_permissions " + User.RABBITMQ[User.ACCOUNT] + " '.*' '.*' '.*'"),
-  ]
+  yumInstall(['rabbitmq-server'])
+  Systemctl("rabbitmq-server.service", ["enable", "start"])
 
-  for task in cmd:
-    task.exe()
+  # rabbitmqctl add_user openstack RABBIT_PASS
+  Task("rabbitmqctl add_user " + User.RABBITMQ[User.ACCOUNT] + " " + User.RABBITMQ[User.PASSWORD])
+  Task("rabbitmqctl set_permissions " + User.RABBITMQ[User.ACCOUNT] + " '.*' '.*' '.*'")
   
 def closeFirewall():
-  srcFile = "../lib/selinux/config"
-  dstFile = "/etc/selinux/config"
-
-  cmd = [
-    Task("copy    selinux config ", "/bin/cp " + srcFile + " " + dstFile),
-  ]
-  for task in cmd:
-    task.exe()
+  FileCopy("../lib/selinux/config", "/etc/selinux/config")
 
   print "success, reboot your computer now? (y/n)"
   ans = raw_input('> ')
 
   if ans in ['y', 'yes', 'Y', 'Yes', 'YES']:
-    Task("reboot", "reboot").exe()
+    Task("reboot")
 
 
 
 def main():
+  """Set the hostname of the node to network"""
   addHosts()
-  installBasic()
-  setupMariadbConfig()
-  installRabbitmq()
-  closeFirewall()
 
+  """OpenStack packages"""
+  installBasic()
+  
+  """SQL database"""
+  setupMariadbConfig()
+
+  """Message queue"""
+  installRabbitmq()
+
+  closeFirewall()
 
 if __name__ == '__main__':
   main()
