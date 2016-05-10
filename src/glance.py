@@ -14,6 +14,7 @@ def createGlance():
   f.exe()
 
 def installGlance():
+  Source().admin()
   Task("openstack user create --password " + User.GLANCE[User.PASSWORD] + " glance")
   Task("openstack role add --project service --user glance admin")
   Task("openstack service create --name glance \
@@ -45,15 +46,13 @@ def installGlance():
   Systemctl("openstack-glance-registry.service", ["enable", "start"])
 
 def verify():
-  Source.admin()
+  Source().admin()
   Task("mkdir /tmp/images")
   Task("wget -P /tmp/images http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img")
   Task("glance image-create --name 'cirros-0.3.4-x86_64' --file /tmp/images/cirros-0.3.4-x86_64-disk.img \
           --disk-format qcow2 --container-format bare --visibility public --progress")
   Task("glance image-list")
   Task("rm -r /tmp/images")
-
-
 
 def main():
   """Install and configure"""
