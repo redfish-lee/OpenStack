@@ -1,11 +1,20 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
-import subprocess
+import os
 
 class User:
   ACCOUNT = "account"
   PASSWORD = "password"
+  # all account is default, not used in setup
+  ADMIN = {
+    ACCOUNT: "admin",
+    PASSWORD: "123456",
+  }
+  DEMO = {
+    ACCOUNT: "demo",
+    PASSWORD: "123456",
+  }
   RABBITMQ = {
     ACCOUNT: "openstack",
     PASSWORD: "123456",
@@ -14,6 +23,15 @@ class User:
     ACCOUNT: "root",
     PASSWORD: "123456",
   }
+  KEYSTONE = {
+    ACCOUNT: "keystone",
+    PASSWORD: "123456",
+  }
+  GLANCE = {
+    ACCOUNT: "glance",
+    PASSWORD: "123456",
+  }
+
 
 class Agent:
   CONTROLLER = "controller"
@@ -29,25 +47,44 @@ class Hosts:
     Agent.COMPUTE: "127.0.0.1",
   }
 
-class Task:
-  def __init__(self, info, command):
-    self.info = info
-    self.command  = command
-  def info(self):
-    return self.info
-  def command(self):
-    return self.command
-  def exe(self):
-    print "[INFO] " + self.info
-    subprocess.call(self.command.split())
+class Source:
+  def export(self, key, value):
+    os.environ[key] = value
 
-class Tee(object):
-    def __init__(self, *files):
-        self.files = files
-    def write(self, obj):
-        for f in self.files:
-            f.write(obj)
-            f.flush() # If you want the output to be visible immediately
-    def flush(self) :
-        for f in self.files:
-            f.flush()
+  def delexp(self, key):
+    try:
+      del os.environ[key]
+    except:
+      print "[WARN] unset " + key
+
+  def admin(self):
+    self.delexp('OS_SERVICE_TOKEN')
+    self.export('OS_USERNAME'         , 'admin')
+    self.export('OS_PASSWORD'         , User.ADMIN[User.PASSWORD])
+    self.export('OS_AUTH_URL'         , 'http://controller:5000/v2.0')
+    self.export('PS1'                 , '[\u@\h \W(keystone_admin)]\$ ')
+
+    self.export('OS_TENANT_NAME'      , 'admin')
+    self.export('OS_REGION_NAME'      , 'RegionOne')
+    self.export('OS_IMAGE_API_VERSION', '2')
+
+  def demo(self):
+    self.delexp('OS_SERVICE_TOKEN')
+    self.export('OS_USERNAME'         , 'demo')
+    self.export('OS_PASSWORD'         , User.DEMO[User.PASSWORD])
+    self.export('OS_AUTH_URL'         , 'http://controller:5000/v2.0')
+    self.export('PS1'                 , '[\u@\h \W(keystone_demo)]\$ ')
+
+    self.export('OS_TENANT_NAME'      , 'demo')
+    self.export('OS_REGION_NAME'      , 'RegionOne')
+    self.export('OS_IMAGE_API_VERSION', '2')
+
+
+
+
+
+
+
+
+
+
