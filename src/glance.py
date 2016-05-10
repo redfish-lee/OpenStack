@@ -30,7 +30,7 @@ def installKeystone():
   f.replace('ADMIN_TOKEN', User.ADMIN[User.PASSWORD])
   f.replace('KEYSTONE_DBPASS', User.GLANCE[User.PASSWORD])
 
-  Task("/bin/sh -c 'keystone-manage db_sync' keystone")
+  Task("keystone-manage db_sync")
 
 def configureHTTP():
 
