@@ -47,7 +47,10 @@ class Source:
     os.environ[key] = value
 
   def delexp(self, key):
-    del os.environ[key]
+    try:
+      del os.environ[key]
+    except:
+      print "[WARN] unset " + key
 
   def admin(self):
     self.delexp('OS_SERVICE_TOKEN')

@@ -7,7 +7,7 @@ from func import *
 def createKeystone():
   Task("mkdir -p ../tmp")
 
-  f = FileCopy("../lib/glance/create_keystone.sh", "../tmp/create_keystone.sh")
+  f = FileCopy("../lib/keystone/create_keystone.sh", "../tmp/create_keystone.sh")
   f.replace('MYSQL_PASSWORD', User.MYSQL[User.PASSWORD])
   f.replace('KEYSTONE_DBPASS', User.GLANCE[User.PASSWORD])
   f.exe()
@@ -26,7 +26,7 @@ def installKeystone():
 
   Systemctl("memcached.service", ["enable", "start"])
 
-  f = FileCopy("../lib/glance/keystone.conf", "/etc/keystone/keystone.conf")
+  f = FileCopy("../lib/keystone/keystone.conf", "/etc/keystone/keystone.conf")
   f.replace('ADMIN_TOKEN', User.ADMIN[User.PASSWORD])
   f.replace('KEYSTONE_DBPASS', User.GLANCE[User.PASSWORD])
 
@@ -34,14 +34,14 @@ def installKeystone():
 
 def configureHTTP():
 
-  FileCopy("../lib/glance/httpd.conf", "/etc/httpd/conf/httpd.conf")
-  FileCopy("../lib/glance/wsgi-keystone.conf", "/etc/httpd/conf.d/wsgi-keystone.conf")
+  FileCopy("../lib/keystone/httpd.conf", "/etc/httpd/conf/httpd.conf")
+  FileCopy("../lib/keystone/wsgi-keystone.conf", "/etc/httpd/conf.d/wsgi-keystone.conf")
 
   # curl http://git.openstack.org/cgit/openstack/keystone/plain/httpd/keystone.py?h=stable/kilo \
   # | tee /var/www/cgi-bin/keystone/main /var/www/cgi-bin/keystone/admin
   Task("mkdir -p /var/www/cgi-bin/keystone")
-  FileCopy("../lib/glance/cgi-bin_keystone", "/var/www/cgi-bin/keystone/main" ).chmod("755")
-  FileCopy("../lib/glance/cgi-bin_keystone", "/var/www/cgi-bin/keystone/admin").chmod("755")
+  FileCopy("../lib/keystone/cgi-bin_keystone", "/var/www/cgi-bin/keystone/main" ).chmod("755")
+  FileCopy("../lib/keystone/cgi-bin_keystone", "/var/www/cgi-bin/keystone/admin").chmod("755")
 
   Task("chown -R keystone:keystone /var/www/cgi-bin/keystone")
 
@@ -76,36 +76,36 @@ def createUser():
 
 def verify():
   # /usr/share/keystone/keystone-dist-paste.ini
-  FileCopy("../lib/glance/keystone-dist-paste.ini","/usr/share/keystone/keystone-dist-paste.ini")
+  FileCopy("../lib/keystone/keystone-dist-paste.ini","/usr/share/keystone/keystone-dist-paste.ini")
   Source().delexp("OS_TOKEN")
   Source().delexp("OS_URL")
   # step 3
   Task("openstack --os-auth-url http://controller:35357 \
           --os-project-name admin --os-username admin --os-password " + User.ADMIN[User.PASSWORD] \
-          + "token issue")
+          + " token issue")
   Task("openstack --os-auth-url http://controller:35357 \
           --os-project-domain-id default --os-user-domain-id default \
           --os-project-name admin --os-username admin --os-password " + User.ADMIN[User.PASSWORD] \
-          + "token issue")
+          + " token issue")
   Task("openstack --os-auth-url http://controller:35357 \
           --os-project-name admin --os-username admin --os-password " + User.ADMIN[User.PASSWORD] \
-          + "project list")
+          + " project list")
   Task("openstack --os-auth-url http://controller:35357 \
           --os-project-name admin --os-username admin --os-password " + User.ADMIN[User.PASSWORD] \
-          + "user list")
+          + " user list")
   Task("openstack --os-auth-url http://controller:35357 \
           --os-project-name admin --os-username admin --os-password " + User.ADMIN[User.PASSWORD] \
-          + "role list")
+          + " role list")
   # step 8
   Task("openstack --os-auth-url http://controller:5000 \
           --os-project-domain-id default --os-user-domain-id default \
           --os-project-name demo --os-username demo --os-password " + User.DEMO[User.PASSWORD] \
-          + "token issue")
+          + " token issue")
 
 def scripts():
-  f = FileCopy("../lib/glance/admin-openrc.sh","../admin-openrc.sh")
+  f = FileCopy("../lib/keystone/admin-openrc.sh","../admin-openrc.sh")
   f.replace('ADMIN_TOKEN', User.ADMIN[User.PASSWORD])
-  f = FileCopy("../lib/glance/demo-openrc.sh", "../demo-openrc.sh")
+  f = FileCopy("../lib/keystone/demo-openrc.sh", "../demo-openrc.sh")
   f.replace('DEMO_PASS', User.DEMO[User.PASSWORD])
   Source().admin()
   Task("openstack token issue")
