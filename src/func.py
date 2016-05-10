@@ -2,8 +2,8 @@
 # -*- coding: UTF-8 -*-
 
 class Task:
-  def __init__(self, command, info=""):
-    self.info = command if info is "" else info
+  def __init__(self, command, info=None):
+    self.info = command if info is None else info
     self.command  = command
     self.exe()
   def info(self):
@@ -26,19 +26,24 @@ class FileCopy:
   def dst(self):
     return self.dst
   
-  def chmod(per, dst = self.dst):
+  def chmod(self, per, dst = None):
+    dst = self.dst if dst is None else dst
     Task("chmod "   + per + " " + dst)
   
-  def copy(src = self.src, dst = self.dst):
+  def copy(self, src = None, dst = None):
+    dst = self.dst if dst is None else dst
+    src = self.src if src is None else src
     Task("touch "   + dst)
     Task("/bin/cp " + src + " " + dst)
   
-  def replace(old_string, new_string, dst = self.dst):
+  def replace(self, old_string, new_string, dst = None):
+    dst = self.dst if dst is None else dst
     print "[INFO] replace", dst
     inplaceChange(dst, old_string, new_string)
 
-  def exe(dst = self.dst):
-    self.chmod("+x"):
+  def exe(dst = None):
+    dst = self.dst if dst is None else dst
+    self.chmod("+x")
     Task(dst)
 
 class Systemctl():
