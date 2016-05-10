@@ -14,6 +14,10 @@ class User:
     ACCOUNT: "root",
     PASSWORD: "123456",
   }
+  GLANCE = {
+    ACCOUNT: "keystone"
+    PASSWORD: "123456"
+  }
 
 class Agent:
   CONTROLLER = "controller"

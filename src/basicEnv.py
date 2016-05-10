@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
-import shlex, os, sys
 from config import *
 from func import *
 
@@ -28,6 +27,7 @@ def installBasic():
 
   cmd = [
     Task("install epel           ", "yum install http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm -y"),
+    Task("install rdo kilo       ", "yum install http://rdo.fedorapeople.org/openstack-kilo/rdo-release-kilo.rpm -y"),
     Task("update  centos         ", "yum update -y"),
     Task("install selinux        ", "yum install openstack-selinux -y"),
     Task("install mariadb        ", "yum install mariadb mariadb-server MySQL-python -y"),
