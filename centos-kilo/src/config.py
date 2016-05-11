@@ -47,6 +47,10 @@ class User:
     ACCOUNT: "heat",
     PASSWORD: "123456",
   }
+  CEILOMETER = {
+    ACCOUNT: "ceilometer",
+    PASSWORD: "123456",
+  }
 
 class Network:
   # use VirtualBox setting as default

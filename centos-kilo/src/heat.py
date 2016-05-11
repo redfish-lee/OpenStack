@@ -1,9 +1,9 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
+import commands
 from config import *
 from func import *
-
 
 def createHeat():
   Task("mkdir -p ../tmp")
@@ -64,11 +64,11 @@ def installHeat():
 def verify():
   Source().admin()
   Task("mkdir -p ../tmp")
-  
+
   f = FileCopy("../lib/heat/test-stack.yml", "../tmp/test-stack.yml")
-  Task("NET_ID=$(nova net-list | awk '/ demo-net / { print $2 }')")
-  Task("heat stack-create -f " + f.dst() + " \
-          -P 'ImageID=cirros-0.3.4-x86_64;NetID=$NET_ID' testStack")
+  net_id = commands.getoutput("(nova net-list | awk '/ demo-net / { print $2 }')")
+  Task("heat stack-create -f " + f.printDst() + " \
+          -P 'ImageID=cirros-0.3.4-x86_64;NetID=" + net_id + "' testStack")
   Task("heat stack-list")
 
 def main():

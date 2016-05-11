@@ -24,10 +24,10 @@ class FileCopy:
     self.dst = dst
     self.copy()
   
-  def src(self):
+  def printSrc(self):
     return self.src
   
-  def dst(self):
+  def printDst(self):
     return self.dst
   
   def chmod(self, per, dst = None):
