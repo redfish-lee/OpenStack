@@ -39,6 +39,10 @@ class User:
     ACCOUNT: "neutron",
     PASSWORD: "123456",
   }
+  METADATA = {
+    ACCOUNT: "metadata"
+    PASSWORD: "123456"
+  }
 
 class Agent:
   CONTROLLER = "controller"

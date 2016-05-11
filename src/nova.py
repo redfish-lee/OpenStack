@@ -15,7 +15,7 @@ def createNova():
 
 def installNova():
   Source().admin()
-  Task("openstack user create --password " + User.GLANCE[User.PASSWORD] + " nova")
+  Task("openstack user create --password " + User.NOVA[User.PASSWORD] + " nova")
   Task("openstack role add --project service --user nova admin")
   Task("openstack service create --name nova \
           --description 'OpenStack Compute' compute")
