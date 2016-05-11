@@ -26,6 +26,7 @@ python horizon.py
 ```
 
 ### options
+after basic installation
 ```sh
 python heat.py
 python ceilometer.py
