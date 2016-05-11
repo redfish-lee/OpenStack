@@ -26,6 +26,10 @@ def createNeutron():
           network")
 
 def installNeutron():
+
+  f = FileCopy("../lib/neutron/sysctl.conf", "/etc/sysctl.conf")
+  Task("sysctl -p")
+
   install_list = [
     "openstack-neutron",
     "openstack-neutron-ml2",
@@ -37,15 +41,11 @@ def installNeutron():
 
   f = FileCopy("../lib/neutron/l3_agent.ini", "/etc/neutron/l3_agent.ini")
   f = FileCopy("../lib/neutron/dhcp_agent.ini", "/etc/neutron/dhcp_agent.ini")
-  f = FileCopy("../lib/neutron/sysctl.conf", "/etc/sysctl.conf")
-  Task("sysctl -p")
-
   f = FileCopy("../lib/neutron/neutron.conf", "/etc/neutron/neutron.conf")
   f.replace('NEUTRON_DBPASS', User.NEUTRON[User.PASSWORD])
   f.replace('NEUTRON_PASS', User.NEUTRON[User.PASSWORD])
   f.replace('RABBIT_PASS', User.RABBITMQ[User.PASSWORD])
   f.replace('NOVA_PASS', User.NOVA[User.PASSWORD])
-
 
   f = FileCopy("../lib/neutron/ml2_conf.ini", "/etc/neutron/plugins/ml2/ml2_conf.ini")
   f.replace('INSTANCE_TUNNELS_INTERFACE_IP_ADDRESS', Hosts.HOSTS_IP[Agent.NETWORK])
@@ -62,6 +62,7 @@ def installNeutron():
   f = FileCopy("../lib/neutron/metadata_agent.ini", "/etc/neutron/metadata_agent.ini")
   f.replace('NEUTRON_PASS', User.NEUTRON[User.PASSWORD])
   f.replace('METADATA_SECRET', User.METADATA[User.PASSWORD])
+  
   
   Task("ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini")
   Task("su -s /bin/sh -c 'neutron-db-manage --config-file /etc/neutron/neutron.conf \
