@@ -79,14 +79,13 @@ def installNeutron():
 
   Systemctl("neutron-server.service", ["enable", "start"])
   Systemctl("openvswitch.service", ["enable", "start"])
-
-  Systemctl("neutron-openvswitch-agent.service", ["enable", "start"]) 
+  Task("ovs-vsctl add-br br-ex")
+   
   Systemctl("neutron-l3-agent.service", ["enable", "start"])
   Systemctl("neutron-dhcp-agent.service", ["enable", "start"]) 
   Systemctl("neutron-metadata-agent.service", ["enable", "start"])
   Systemctl("neutron-ovs-cleanup.service", ["enable"])
-
-  Task("ovs-vsctl add-br br-ex")
+  Systemctl("neutron-openvswitch-agent.service", ["enable", "start"])
 
 def verify():
   Source().admin()
