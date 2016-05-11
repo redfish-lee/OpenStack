@@ -40,8 +40,8 @@ class User:
     PASSWORD: "123456",
   }
   METADATA = {
-    ACCOUNT: "metadata"
-    PASSWORD: "123456"
+    ACCOUNT: "metadata",
+    PASSWORD: "123456",
   }
 
 class Agent:
