@@ -75,8 +75,7 @@ def installNeutron():
   Systemctl("openstack-nova-api.service", ["restart"])
   Systemctl("openstack-nova-scheduler.service", ["restart"])
   Systemctl("openstack-nova-conductor.service", ["restart"])
-  Systemctl("openstack-nova-compute.service", ["restart"])
-
+  
   Systemctl("neutron-server.service", ["enable", "start"])
   Systemctl("openvswitch.service", ["enable", "start"])
   Task("ovs-vsctl add-br br-ex")
@@ -85,6 +84,8 @@ def installNeutron():
   Systemctl("neutron-dhcp-agent.service", ["enable", "start"]) 
   Systemctl("neutron-metadata-agent.service", ["enable", "start"])
   Systemctl("neutron-ovs-cleanup.service", ["enable"])
+
+  Systemctl("openstack-nova-compute.service", ["restart"])
   Systemctl("neutron-openvswitch-agent.service", ["enable", "start"])
 
 def verify():
