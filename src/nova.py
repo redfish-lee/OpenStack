@@ -25,18 +25,15 @@ def createNova():
           compute")
 
 def installNova():
-  install_list = [
-    "openstack-nova-api",
-    "openstack-nova-cert",
-    "openstack-nova-conductor",
-    "openstack-nova-console",
-    "openstack-nova-novncproxy",
-    "openstack-nova-scheduler",
-    "python-novaclient",
-    "openstack-nova-compute",
-    "sysfsutils",
-  ]
-  yumInstall(install_list)
+  yumInstall("openstack-nova-api")
+  yumInstall("openstack-nova-cert")
+  yumInstall("openstack-nova-conductor")
+  yumInstall("openstack-nova-console")
+  yumInstall("openstack-nova-novncproxy")
+  yumInstall("openstack-nova-scheduler")
+  yumInstall("python-novaclient")
+  yumInstall("openstack-nova-compute")
+  yumInstall("sysfsutils")
 
   f = FileCopy("../lib/nova/nova.conf", "/etc/nova/nova.conf")
   f.replace('NOVA_DBPASS', User.NOVA[User.PASSWORD])
@@ -57,7 +54,6 @@ def installNova():
   Systemctl("openstack-nova-compute.service", ["enable", "start"])
   Systemctl("libvirtd.service", ["enable", "start"])
 
-
 def verify():
   Source().admin()
   Task("nova service-list")
@@ -67,6 +63,7 @@ def verify():
 def main():
   createNova()
   installNova()
+  
   verify()
 
 

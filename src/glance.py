@@ -26,12 +26,9 @@ def createGlance():
           image")
 
 def installGlance():
-  install_list = [
-    "openstack-glance",
-    "python-glance",
-    "python-glanceclient",
-  ]
-  yumInstall(install_list)
+  yumInstall("openstack-glance")
+  yumInstall("python-glance")
+  yumInstall("python-glanceclient")
 
   f = FileCopy("../lib/glance/glance-api.conf", "/etc/glance/glance-api.conf")
   f.replace('GLANCE_DBPASS', User.GLANCE[User.PASSWORD])
@@ -45,6 +42,12 @@ def installGlance():
   Systemctl("openstack-glance-api.service", ["enable", "start"])
   Systemctl("openstack-glance-registry.service", ["enable", "start"])
 
+def fixBugImages():
+  # after update 20160501
+  f = FileCopy("../lib/bugs/images.py", "/usr/lib/python2.7/site-packages/glanceclient/v1/images.py")
+  Task("rm -f /usr/lib/python2.7/site-packages/glanceclient/v1/images.pyc")
+  Task("rm -f /usr/lib/python2.7/site-packages/glanceclient/v1/images.pyo")
+
 def verify():
   Source().admin()
   Task("mkdir /tmp/images")
@@ -57,6 +60,9 @@ def verify():
 def main():
   createGlance()
   installGlance()
+
+  fixBugImages()
+  
   verify()
 
 
