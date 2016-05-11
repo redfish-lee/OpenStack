@@ -67,7 +67,7 @@ def verify():
 
   f = FileCopy("../lib/heat/test-stack.yml", "../tmp/test-stack.yml")
   net_id = commands.getoutput("(nova net-list | awk '/ demo-net / { print $2 }')")
-  Task("heat stack-create -f " + f.dst() + " \
+  Task("heat stack-create -f " + f.printDst() + " \
           -P 'ImageID=cirros-0.3.4-x86_64;NetID=" + net_id + "' testStack")
   Task("heat stack-list")
 
