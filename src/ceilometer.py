@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
-
+import commands
 from config import *
 from func import *
 
@@ -107,7 +107,7 @@ def verify():
 def main():
   installMongodb()
   installTelemetry()
-  
+
   configureCompute()
   configureImage()
   configureBlock()
