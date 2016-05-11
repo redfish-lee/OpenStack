@@ -71,9 +71,15 @@ class Tee(object):
         for f in self.files:
             f.flush()
 
-def yumInstall(install_list):
-  for item in install_list:
-    Task("yum install " + item + " -y")
+def rebootComputer():
+  print "reboot your computer now? (y/n)"
+  ans = raw_input('> ')
+
+  if ans in ['y', 'yes', 'Y', 'Yes', 'YES']:
+    Task("reboot")
+
+def yumInstall(item):
+  Task("yum install " + item + " -y")
 
 def inplaceChange(filename, old_string, new_string):
   # Safely read the input filename using 'with'

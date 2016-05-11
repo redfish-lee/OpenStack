@@ -45,6 +45,8 @@ class User:
   }
 
 class Network:
+  # use VirtualBox setting as default
+  INTERFACE_NAME = "enp0s3"
   # external network
   EXTERNAL_NETWORK_CIDR = "10.0.2.0/24"
   FLOATING_IP_START = "10.0.2.101"
@@ -59,7 +61,6 @@ class Agent:
   CONTROLLER = "controller"
   NETWORK = "network"
   COMPUTE = "compute"
-
 
 class Hosts:
   HOSTS_DIR = "/etc/hosts"

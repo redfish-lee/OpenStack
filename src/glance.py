@@ -26,12 +26,9 @@ def createGlance():
           image")
 
 def installGlance():
-  install_list = [
-    "openstack-glance",
-    "python-glance",
-    "python-glanceclient",
-  ]
-  yumInstall(install_list)
+  yumInstall("openstack-glance")
+  yumInstall("python-glance")
+  yumInstall("python-glanceclient")
 
   f = FileCopy("../lib/glance/glance-api.conf", "/etc/glance/glance-api.conf")
   f.replace('GLANCE_DBPASS', User.GLANCE[User.PASSWORD])
@@ -63,7 +60,9 @@ def verify():
 def main():
   createGlance()
   installGlance()
+
   fixBugImages()
+  
   verify()
 
 

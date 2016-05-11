@@ -5,14 +5,11 @@ from config import *
 from func import *
 
 def installHorizon():
-  install_list = [
-    "openstack-dashboard",
-    "httpd",
-    "mod_wsgi",
-    "memcached",
-    "python-memcached",
-  ]
-  yumInstall(install_list)
+  yumInstall("openstack-dashboard")
+  yumInstall("httpd")
+  yumInstall("mod_wsgi")
+  yumInstall("memcached")
+  yumInstall("python-memcached")
 
   FileCopy("../lib/horizon/local_settings", "/etc/openstack-dashboard/local_settings")
 
@@ -23,6 +20,12 @@ def installHorizon():
 
 def main():
   installHorizon()
+
+  # reboot for configure fixed bugs
+  rebootComputer()
+
+  # verify
+  # open the page "http://controller/dashboard/" on browser
 
 if __name__ == '__main__':
   main()

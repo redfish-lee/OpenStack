@@ -13,16 +13,12 @@ def createKeystone():
   f.exe()
 
 def installKeystone():
-  install_list = [
-    "openstack-keystone",
-    "httpd",
-    "mod_wsgi",
-    "python-openstackclient",
-    "memcached",
-    "python-memcached",
-  ]
-
-  yumInstall(install_list)
+  yumInstall("openstack-keystone")
+  yumInstall("httpd")
+  yumInstall("mod_wsgi")
+  yumInstall("python-openstackclient")
+  yumInstall("memcached")
+  yumInstall("python-memcached")
 
   Systemctl("memcached.service", ["enable", "start"])
 
@@ -101,7 +97,7 @@ def verify():
           --os-project-name demo --os-username demo --os-password " + User.DEMO[User.PASSWORD] \
           + " token issue")
 
-def scripts():
+def createScripts():
   f = FileCopy("../lib/keystone/admin-openrc.sh","../admin-openrc.sh")
   f.replace('ADMIN_TOKEN', User.ADMIN[User.PASSWORD])
   f = FileCopy("../lib/keystone/demo-openrc.sh", "../demo-openrc.sh")
@@ -110,22 +106,14 @@ def scripts():
   Task("openstack token issue")
 
 def main():
-  """Install and configure"""
   createKeystone()
   installKeystone()
   configureHTTP()
-
-  """Create the service entity and API endpoint"""
   endPoint()
-
-  """Create projects, users, and roles"""
   createUser()
 
-  """Verify operation"""
   verify()
-
-  """Create OpenStack client environment scripts"""
-  scripts()
+  createScripts()
 
 
 if __name__ == '__main__':

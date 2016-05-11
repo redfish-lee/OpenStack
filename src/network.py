@@ -4,7 +4,6 @@
 from config import *
 from func import *
 
-
 def createExternalNetwork():
   Source().admin()
   Task("neutron net-create ext-net --router:external \
@@ -31,8 +30,8 @@ def verify():
 def main():
   createExternalNetwork()
   createTenantNetwork()
+  
   verify()
-
 
 if __name__ == '__main__':
   main()

@@ -26,18 +26,14 @@ def createNeutron():
           network")
 
 def installNeutron():
-
   f = FileCopy("../lib/neutron/sysctl.conf", "/etc/sysctl.conf")
   Task("sysctl -p")
 
-  install_list = [
-    "openstack-neutron",
-    "openstack-neutron-ml2",
-    "openstack-neutron-openvswitch",
-    "python-neutronclient",
-    "which",
-  ]
-  yumInstall(install_list)
+  yumInstall("openstack-neutron")
+  yumInstall("openstack-neutron-ml2")
+  yumInstall("openstack-neutron-openvswitch")
+  yumInstall("python-neutronclient")
+  yumInstall("which")
 
   f = FileCopy("../lib/neutron/l3_agent.ini", "/etc/neutron/l3_agent.ini")
   f = FileCopy("../lib/neutron/dhcp_agent.ini", "/etc/neutron/dhcp_agent.ini")
@@ -79,6 +75,7 @@ def installNeutron():
   Systemctl("neutron-server.service", ["enable", "start"])
   Systemctl("openvswitch.service", ["enable", "start"])
   Task("ovs-vsctl add-br br-ex")
+  Task("ovs-vsctl add-port br-ex " + Network.INTERFACE_NAME)
    
   Systemctl("neutron-l3-agent.service", ["enable", "start"])
   Systemctl("neutron-dhcp-agent.service", ["enable", "start"]) 
@@ -97,11 +94,10 @@ def verify():
   # Install and configure compute node
   Task("neutron agent-list")
 
-
-
 def main():
   createNeutron()
   installNeutron()
+  
   verify()
 
 

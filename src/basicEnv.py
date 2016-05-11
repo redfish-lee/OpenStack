@@ -6,7 +6,6 @@ from config import *
 from func import *
 
 def addHosts():
-  
   print "[INFO] add ip on hosts"
   f = open(Hosts.HOSTS_DIR, 'a')
   original = sys.stdout
@@ -24,18 +23,12 @@ def addHosts():
   f.close()
 
 def installBasic():
-
-
-  install_list = [
-    "http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm",
-    "http://rdo.fedorapeople.org/openstack-kilo/rdo-release-kilo.rpm",
-    "openstack-selinux",
-    "mariadb",
-    "mariadb-server",
-    "MySQL-python",
-  ]
-
-  yumInstall(install_list)
+  yumInstall("http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm")
+  yumInstall("http://rdo.fedorapeople.org/openstack-kilo/rdo-release-kilo.rpm")
+  yumInstall("openstack-selinux")
+  yumInstall("mariadb")
+  yumInstall("mariadb-server")
+  yumInstall("MySQL-python")
   Task("yum update -y")
 
 def setupMariadbConfig():
@@ -49,16 +42,13 @@ def setupMariadbConfig():
   # mysql_secure_installation
   # lib/mariadb/mysql_secure.sh
   Task("mkdir -p ../tmp")
-  yumInstall(['expect'])
+  yumInstall("expect")
   f = FileCopy("../lib/mariadb/mysql_secure.sh", "../tmp/mysql_secure.sh")
   f.replace('MYSQL_PASSWORD', User.MYSQL[User.PASSWORD])
   f.exe()
 
-  
-
 def installRabbitmq():
-
-  yumInstall(['rabbitmq-server'])
+  yumInstall("rabbitmq-server")
   Systemctl("rabbitmq-server.service", ["enable", "start"])
 
   # rabbitmqctl add_user openstack RABBIT_PASS
@@ -68,28 +58,15 @@ def installRabbitmq():
 def closeFirewall():
   FileCopy("../lib/selinux/config", "/etc/selinux/config")
 
-  print "success, reboot your computer now? (y/n)"
-  ans = raw_input('> ')
-
-  if ans in ['y', 'yes', 'Y', 'Yes', 'YES']:
-    Task("reboot")
-
-
-
 def main():
-  """Set the hostname of the node to network"""
   addHosts()
-
-  """OpenStack packages"""
   installBasic()
-
-  """SQL database"""
   setupMariadbConfig()
-
-  """Message queue"""
   installRabbitmq()
-
   closeFirewall()
+
+  # reboot before install httpd
+  rebootComputer()
 
 if __name__ == '__main__':
   main()
