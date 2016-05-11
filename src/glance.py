@@ -13,7 +13,6 @@ def createGlance():
   f.replace('GLANCE_DBPASS', User.GLANCE[User.PASSWORD])
   f.exe()
 
-def installGlance():
   Source().admin()
   Task("openstack user create --password " + User.GLANCE[User.PASSWORD] + " glance")
   Task("openstack role add --project service --user glance admin")
@@ -26,6 +25,7 @@ def installGlance():
           --region RegionOne \
           image")
 
+def installGlance():
   install_list = [
     "openstack-glance",
     "python-glance",
@@ -55,13 +55,8 @@ def verify():
   Task("rm -r /tmp/images")
 
 def main():
-  """Install and configure"""
   createGlance()
-
-  """Install and configure"""
   installGlance()
-
-  """Verify operation"""
   verify()
 
 

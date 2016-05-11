@@ -12,10 +12,8 @@ def createNova():
   f.replace('MYSQL_PASSWORD', User.MYSQL[User.PASSWORD])
   f.replace('NOVA_DBPASS', User.NOVA[User.PASSWORD])
   f.exe()
-
-def installNova():
   Source().admin()
-  Task("openstack user create --password " + User.GLANCE[User.PASSWORD] + " nova")
+  Task("openstack user create --password " + User.NOVA[User.PASSWORD] + " nova")
   Task("openstack role add --project service --user nova admin")
   Task("openstack service create --name nova \
           --description 'OpenStack Compute' compute")
@@ -26,6 +24,7 @@ def installNova():
           --region RegionOne \
           compute")
 
+def installNova():
   install_list = [
     "openstack-nova-api",
     "openstack-nova-cert",
@@ -34,10 +33,10 @@ def installNova():
     "openstack-nova-novncproxy",
     "openstack-nova-scheduler",
     "python-novaclient",
+    "openstack-nova-compute",
+    "sysfsutils",
   ]
   yumInstall(install_list)
-
-
 
   f = FileCopy("../lib/nova/nova.conf", "/etc/nova/nova.conf")
   f.replace('NOVA_DBPASS', User.NOVA[User.PASSWORD])
@@ -47,6 +46,7 @@ def installNova():
   f.replace('MANAGEMENT_INTERFACE_IP_ADDRESS', Hosts.HOSTS_IP[Agent.CONTROLLER])
 
   Task("su -s /bin/sh -c 'nova-manage db sync' nova")
+  Task("egrep -c '(vmx|svm)' /proc/cpuinfo")
 
   Systemctl("openstack-nova-api.service", ["enable", "start"])
   Systemctl("openstack-nova-cert.service", ["enable", "start"])
@@ -54,17 +54,8 @@ def installNova():
   Systemctl("openstack-nova-scheduler.service", ["enable", "start"])
   Systemctl("openstack-nova-conductor.service", ["enable", "start"])
   Systemctl("openstack-nova-novncproxy.service", ["enable", "start"])
-
-  install_list = [
-    "openstack-nova-compute",
-    "sysfsutils",
-  ]
-  yumInstall(install_list)
-
-  Task("egrep -c '(vmx|svm)' /proc/cpuinfo")
-
-  Systemctl("libvirtd.service", ["enable", "start"])
   Systemctl("openstack-nova-compute.service", ["enable", "start"])
+  Systemctl("libvirtd.service", ["enable", "start"])
 
 
 def verify():
@@ -74,12 +65,8 @@ def verify():
   Task("nova image-list")
 
 def main():
-  """Install and configure controller node"""
-  """Install and configure a compute node"""
   createNova()
   installNova()
-
-  """Verify operation"""
   verify()
 
 

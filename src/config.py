@@ -39,6 +39,21 @@ class User:
     ACCOUNT: "neutron",
     PASSWORD: "123456",
   }
+  METADATA = {
+    ACCOUNT: "metadata",
+    PASSWORD: "123456",
+  }
+
+class Network:
+  # external network
+  EXTERNAL_NETWORK_CIDR = "10.0.2.0/24"
+  FLOATING_IP_START = "10.0.2.101"
+  FLOATING_IP_END = "10.0.2.200"
+  EXTERNAL_NETWORK_GATEWAY = "10.0.2.2"
+  # tenant network
+  TENANT_NETWORK_CIDR = "192.168.1.0/24"
+  DNS_RESOLVER = "8.8.8.8"
+  TENANT_NETWORK_GATEWAY = "192.168.1.1"
 
 class Agent:
   CONTROLLER = "controller"
@@ -65,6 +80,7 @@ class Source:
       print "[WARN] unset " + key
 
   def admin(self):
+    print "[INFO] Source Admin Keystone"
     self.delexp('OS_SERVICE_TOKEN')
     self.export('OS_USERNAME'         , 'admin')
     self.export('OS_PASSWORD'         , User.ADMIN[User.PASSWORD])
@@ -76,6 +92,7 @@ class Source:
     self.export('OS_IMAGE_API_VERSION', '2')
 
   def demo(self):
+    print "[INFO] Source Demo Keystone"
     self.delexp('OS_SERVICE_TOKEN')
     self.export('OS_USERNAME'         , 'demo')
     self.export('OS_PASSWORD'         , User.DEMO[User.PASSWORD])
