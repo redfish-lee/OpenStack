@@ -33,7 +33,6 @@ def installKeystone():
   Task("su -s /bin/sh -c 'keystone-manage db_sync' keystone")
 
 def configureHTTP():
-
   FileCopy("../lib/keystone/httpd.conf", "/etc/httpd/conf/httpd.conf")
   FileCopy("../lib/keystone/wsgi-keystone.conf", "/etc/httpd/conf.d/wsgi-keystone.conf")
 

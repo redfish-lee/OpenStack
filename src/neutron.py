@@ -48,7 +48,6 @@ def installNeutron():
 
 
   f = FileCopy("../lib/neutron/ml2_conf.ini", "/etc/neutron/plugins/ml2/ml2_conf.ini")
-  f.replace('NOVA_PASS', User.NOVA[User.PASSWORD])
   f.replace('INSTANCE_TUNNELS_INTERFACE_IP_ADDRESS', Hosts.HOSTS_IP[Agent.NETWORK])
 
   f = FileCopy("../lib/nova/nova.conf", "/etc/nova/nova.conf")

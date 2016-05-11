@@ -69,6 +69,7 @@ class Source:
       print "[WARN] unset " + key
 
   def admin(self):
+    print "[INFO] Source Admin Keystone"
     self.delexp('OS_SERVICE_TOKEN')
     self.export('OS_USERNAME'         , 'admin')
     self.export('OS_PASSWORD'         , User.ADMIN[User.PASSWORD])
@@ -80,6 +81,7 @@ class Source:
     self.export('OS_IMAGE_API_VERSION', '2')
 
   def demo(self):
+    print "[INFO] Source Demo Keystone"
     self.delexp('OS_SERVICE_TOKEN')
     self.export('OS_USERNAME'         , 'demo')
     self.export('OS_PASSWORD'         , User.DEMO[User.PASSWORD])
