@@ -43,6 +43,10 @@ class User:
     ACCOUNT: "metadata",
     PASSWORD: "123456",
   }
+  HEAT = {
+    ACCOUNT: "heat",
+    PASSWORD: "123456",
+  }
 
 class Network:
   # use VirtualBox setting as default
