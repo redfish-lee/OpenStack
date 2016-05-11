@@ -5,7 +5,8 @@ CentOS Openstack Kilo [Document][1]
 ### Virturl Box
 open two NAT before installation
 
-## pull
+## intall
+### pull
 get python script files from github
 
 ```sh
@@ -13,10 +14,9 @@ git clone https://github.com/aaaa1379/OpenStack.git
 cd OpenStack/centos-kilo/src
 ```
 
-## install
+### basic
 in the `OpenStack/centos-kilo/src` and complete the following commands
 
-### basic
 ```sh
 python basicEnv.py
 # press 'y' for reboot
@@ -30,7 +30,8 @@ python horizon.py
 ```
 
 ### options
-after basic installation
+you can execute after basic installation
+
 ```sh
 python heat.py
 python ceilometer.py
