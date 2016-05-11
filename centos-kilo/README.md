@@ -1,11 +1,11 @@
-# OpenStack Installation Scripts
+# Openstack Kilo Scripts
 CentOS Openstack Kilo [Document][1]
 
 ## before
 ### Virturl Box
 open two NAT before installation
 
-## intall
+## intallation
 ### pull
 get python script files from github
 
