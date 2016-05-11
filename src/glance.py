@@ -45,6 +45,12 @@ def installGlance():
   Systemctl("openstack-glance-api.service", ["enable", "start"])
   Systemctl("openstack-glance-registry.service", ["enable", "start"])
 
+def fixBugImages():
+  # after update 20160501
+  f = FileCopy("../lib/bugs/images.py", "/usr/lib/python2.7/site-packages/glanceclient/v1/images.py")
+  Task("rm -f /usr/lib/python2.7/site-packages/glanceclient/v1/images.pyc")
+  Task("rm -f /usr/lib/python2.7/site-packages/glanceclient/v1/images.pyo")
+
 def verify():
   Source().admin()
   Task("mkdir /tmp/images")
@@ -57,6 +63,7 @@ def verify():
 def main():
   createGlance()
   installGlance()
+  fixBugImages()
   verify()
 
 
