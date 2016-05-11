@@ -82,8 +82,13 @@ def configureCompute():
 
 def configureImage():
   f = FileCopy("../lib/ceilometer/glance-api.conf", "/etc/glance/glance-api.conf")
+  f.replace('GLANCE_DBPASS', User.GLANCE[User.PASSWORD])
+  f.replace('GLANCE_PASS', User.GLANCE[User.PASSWORD])
   f.replace('RABBIT_PASS', User.RABBITMQ[User.PASSWORD])
+  
   f = FileCopy("../lib/ceilometer/glance-registry.conf", "/etc/glance/glance-registry.conf")
+  f.replace('GLANCE_DBPASS', User.GLANCE[User.PASSWORD])
+  f.replace('GLANCE_PASS', User.GLANCE[User.PASSWORD])
   f.replace('RABBIT_PASS', User.RABBITMQ[User.PASSWORD])
 
   Systemctl("openstack-glance-api.service", ["restart"])
